@@ -12,6 +12,4 @@ class Tablero(Entorno):
         pass
 
     def mostrar_tablero(self):
-        for fila in self.__tablero:
-            print('|'.join(fila))
-            print('-' * (2 * self.__columnas - 1))
+        print(self.__tablero)
