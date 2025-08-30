@@ -2,11 +2,10 @@ from Tablero import Tablero
 from AgentePuzzle import AgentePuzzle
 import numpy as np
 
-def llenar_tablero(tablero, N):
+def llenar_tablero(tablero: Tablero, N: int):
     np.random.seed(69420)
     numbers = np.random.shuffle(np.arange(N * N))
-    matriz = numbers.reshape(N, N)
-    tablero.__tablero = matriz.tolist()
+    tablero.__tablero = numbers.reshape(N, N)
 
 if __name__ == "__main__":
     N = 4
