@@ -1,14 +1,16 @@
+import numpy as np
 from AgenteIA.Entorno import Entorno
 
 class Tablero(Entorno):
     def __init__(self, N):
         super().__init__()
         self.__estado = None
+        self.N = N
 
     def get_estado(self):
         return self.__estado
     
-    def set_estado(self, estado: list[list[int]]):
+    def set_estado(self, estado):
         self.__estado = estado
 
     def get_percepciones(self, agente):
@@ -28,5 +30,7 @@ class Tablero(Entorno):
         if self.__estado is None:
             print("El tablero está vacío.")
             return
-        for fila in self.__estado:
-            print(" ".join(f"{elem:2d}" for elem in fila))
+        tablero = np.array(self.__estado)
+        if tablero.ndim == 1:
+            tablero = tablero.reshape((self.N, self.N))
+        print(tablero)

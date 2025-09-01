@@ -1,4 +1,6 @@
 from AgenteIA.AgenteBuscador import AgenteBuscador
+from Nodo import Nodo
+import numpy as np
 import copy
 
 class AgentePuzzle(AgenteBuscador):
@@ -8,28 +10,27 @@ class AgentePuzzle(AgenteBuscador):
         self.distacias_manhattan = [[]]
 
     def generar_hijos(self, estado):
-        N = len(estado)
+        # Se asume que 'estado' es un array plano (1D)
+        board = np.array(estado)
+        total = board.size
+        N = int(np.sqrt(total))  # lado del tablero
         hijos = {}
-        
-        # Find zero position
-        for i in range(N):
-            for j in range(N):
-                if estado[i][j] == 0:
-                    x, y = i, j
-                    break
-        
-        movimientos = [(-1,0), (1,0), (0,-1), (0,1)]
+
+        # Encontrar el índice del 0 en el array plano
+        idx_zero = np.where(board == 0)
+        row = idx_zero // N
+        col = idx_zero % N
+
+        movimientos = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for dx, dy in movimientos:
-            nx, ny = x + dx, y + dy
-            if 0 <= nx < N and 0 <= ny < N:
-                if isinstance(estado, tuple):
-                    nuevo = [list(row) for row in estado]
-                else:
-                    nuevo = copy.deepcopy(estado)
-                
-                nuevo[x][y], nuevo[nx][ny] = nuevo[nx][ny], nuevo[x][y]
-                hijos[tuple(map(tuple, nuevo))] = 1
-        
+            new_row = row + dx
+            new_col = col + dy
+            if 0 <= new_row < N and 0 <= new_col < N:
+                new_idx = new_row * N + new_col
+                nuevo = board.copy()
+                nuevo[idx_zero], nuevo[new_idx] = nuevo[new_idx], nuevo[idx_zero]
+                nodo_hijo = Nodo(nuevo)
+                hijos[nodo_hijo] = 1  # coste uniforme 1 paso
         return hijos
 
     def get_costo(self, camino):
@@ -42,26 +43,21 @@ class AgentePuzzle(AgenteBuscador):
         return self.get_costo(camino) + self.get_heuristica_manhattan(estado_actual)
 
     def get_heuristica_manhattan(self, estado):
-        N = len(estado)
+        board = np.array(estado)
+        total = board.size
+        N = int(np.sqrt(total))
         distancia = 0
-        for i in range(N):
-            for j in range(N):
-                valor = estado[i][j]
-                if valor != 0:
-                    meta_i = (valor - 1) // N
-                    meta_j = (valor - 1) % N
-                    distancia += abs(i - meta_i) + abs(j - meta_j)
-                # If valor == 0, its goal position is (N-1, N-1)
+        for i, valor in enumerate(board):
+            if valor != 0:
+                current_row = i // N
+                current_col = i % N
+                target_row = (valor - 1) // N
+                target_col = (valor - 1) % N
+                distancia += abs(current_row - target_row) + abs(current_col - target_col)
         return distancia
-    
+
     def get_heuristica_fichas_mal_colocadas(self, estado):
-        N = len(estado)
-        fichas_mal_colocadas = 0
-        for i in range(N):
-            for j in range(N):
-                valor_actual = estado[i][j]
-                
-                if valor_actual != 0 and valor_actual != self.get_estado_meta()[i][j]:
-                    fichas_mal_colocadas += 1
-        
-        return fichas_mal_colocadas
+        board = np.array(estado)
+        meta = np.array(self.get_estado_meta())
+        # Asumiendo que meta también es un array plano
+        return int(np.sum((board != 0) & (board != meta)))

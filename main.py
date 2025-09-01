@@ -1,5 +1,6 @@
 from Tablero import Tablero
 from AgentePuzzle import AgentePuzzle
+from Nodo import Nodo
 import numpy as np
 
 TECNICAS = ["manhattan", "fichas_mal_colocadas"]
@@ -7,16 +8,13 @@ TECNICAS = ["manhattan", "fichas_mal_colocadas"]
 def generar_estado_meta(N: int):
     meta = np.arange(1, N * N)
     meta = np.append(meta, 0)
-    meta = meta.reshape(N, N).tolist()
-    return tuple(map(tuple, meta))
+    return meta
 
 def generar_tablero(N: int):
     np.random.seed(69420)
-    numeros = np.arange(N * N)
-    np.random.shuffle(numeros)
-    tablero_desordenado = numeros.reshape(N, N).tolist()
-    tablero_desordenado = tuple(map(tuple, tablero_desordenado))
-    return tablero_desordenado
+    tablero = np.arange(N * N)
+    np.random.shuffle(tablero)
+    return tablero
 
 if __name__ == "__main__":
     # Parametos
@@ -29,7 +27,7 @@ if __name__ == "__main__":
     tablero.mostrar_tablero()
 
     agentito = AgentePuzzle()
-    agentito.set_estado_inicial(tablero.get_estado())
+    agentito.set_estado_inicial(Nodo(tablero.get_estado()))
     agentito.set_estado_meta(generar_estado_meta(N))
     agentito.set_tecnica(TECNICAS[1])
     

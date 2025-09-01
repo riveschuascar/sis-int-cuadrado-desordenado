@@ -8,6 +8,7 @@
 
 from AgenteIA.Agente import Agente
 from copy import deepcopy
+import numpy as np
 import time
 
 class AgenteBuscador(Agente):
@@ -37,7 +38,8 @@ class AgenteBuscador(Agente):
         self.__funcion_sucesor.append(f)
 
     def test_objetivo(self, e):
-        return e == self.__estado_meta
+        return np.array_equal(e, self.__estado_meta)
+        # return e == self.__estado_meta
 
     def generar_hijos(self, e):
         hijos = [fun(e) for fun in self.__funcion_sucesor]
