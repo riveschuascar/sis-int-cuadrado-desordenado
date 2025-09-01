@@ -87,7 +87,7 @@ class AgenteBuscador(Agente):
                 # técnicas de búsqueda
                 if self.__tecnica == "costouniforme":
                     frontera.sort(key=lambda tup: self.get_costo(tup))
-                elif self.__tecnica == "astar":
-                    frontera.sort(key=lambda tup: self.get_costo_estimado(tup))
-                elif self.__tecnica == "heuristica":
-                    frontera.sort(key=lambda tup: self.get_heuristica(tup))
+                elif self.__tecnica == "manhattan":
+                    frontera.sort(key=lambda tup: self.get_heuristica_manhattan(tup[-1]))
+                elif self.__tecnica == "fichas_mal_colocadas":
+                    frontera.sort(key=lambda tup: self.get_heuristica_fichas_mal_colocadas(tup[-1]))

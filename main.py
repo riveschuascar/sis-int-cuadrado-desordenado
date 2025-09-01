@@ -2,17 +2,37 @@ from Tablero import Tablero
 from AgentePuzzle import AgentePuzzle
 import numpy as np
 
-def llenar_tablero(tablero: Tablero, N: int):
+TECNICAS = ["manhattan", "fichas_mal_colocadas"]
+
+def generar_estado_meta(N: int):
+    meta = np.arange(1, N * N)
+    meta = np.append(meta, 0)
+    meta = meta.reshape(N, N).tolist()
+    return tuple(map(tuple, meta))
+
+def generar_tablero(N: int):
     np.random.seed(69420)
-    numbers = np.random.shuffle(np.arange(N * N))
-    tablero.__tablero = numbers.reshape(N, N)
+    numeros = np.arange(N * N)
+    np.random.shuffle(numeros)
+    tablero_desordenado = numeros.reshape(N, N).tolist()
+    tablero_desordenado = tuple(map(tuple, tablero_desordenado))
+    return tablero_desordenado
 
 if __name__ == "__main__":
+    # Parametos
     N = 4
+    tecnica = TECNICAS[1]
+
+    # Tablero
     tablero = Tablero(N)
-    llenar_tablero(tablero, N)
+    tablero.set_estado(generar_tablero(N))
+    tablero.mostrar_tablero()
+
     agentito = AgentePuzzle()
-    agentito.__estado_inicial = tablero.__tablero
-    agentito.__estado_meta = np.arange(N*N).reshape(N, N).tolist()
-    tablero.add_agente(agentito)
+    agentito.set_estado_inicial(tablero.get_estado())
+    agentito.set_estado_meta(generar_estado_meta(N))
+    agentito.set_tecnica(TECNICAS[1])
+    
+    tablero.insertar(agentito)
     tablero.run()
+    print(f"Tecnica usada: {TECNICAS[1]}")
