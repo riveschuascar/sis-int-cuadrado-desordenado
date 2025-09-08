@@ -57,11 +57,11 @@ class AgentePuzzle(AgenteBuscador):
     def get_heuristica_fichas_mal_colocadas(self, estado):
         N = len(estado)
         fichas_mal_colocadas = 0
+        meta = self.get_estado_meta()
         for i in range(N):
             for j in range(N):
                 valor_actual = estado[i][j]
-                
-                if valor_actual != 0 and valor_actual != self.get_estado_meta()[i][j]:
+                if valor_actual != meta[i][j]:
                     fichas_mal_colocadas += 1
         
         return fichas_mal_colocadas

@@ -16,10 +16,6 @@ class Tablero(Entorno):
 
     def ejecutar(self, agente):
         agente.programa()
-        for tupla in agente.get_acciones():
-            for lista in tupla:
-                print(f"{lista}", end="\n")
-            print("->")
         for r in agente.get_medida_rendimiento().items():
             print(f"{r[0]}: {r[1]}")
         agente.inhabilitar()
